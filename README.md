@@ -32,23 +32,23 @@ Ce projet étudie la relation statistique entre deux variables démographiques :
 
 └── images/ # Visualisations générées
 
-├── 01_histogramme_natalite.jpg
+      ├── 01_histogramme_natalite.jpg
+      
+      ├── 02_histogramme_urbanisation.jpg
 
-├── 02_histogramme_urbanisation.jpg
+      ├── 03_boxplot_natalite.jpg
 
-├── 03_boxplot_natalite.jpg
+      ├── 04_boxplot_urbanisation.jpg
 
-├── 04_boxplot_urbanisation.jpg
+      ├── 05_nuage_points.jpg
 
-├── 05_nuage_points.jpg
+      ├── 06_regression_lineaire.jpg
 
-├── 06_regression_lineaire.jpg
+      ├── 07_residus_ajustees.jpg
+  
+      ├── 08_qqplot_residus.jpg
 
-├── 07_residus_ajustees.jpg
-
-├── 08_qqplot_residus.jpg
-
-└── 09_diagnostic_complet.jpg
+      └── 09_diagnostic_complet.jpg
 
 
 ## 🔧 Technologies Utilisées
