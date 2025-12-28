@@ -32,23 +32,23 @@ Ce projet étudie la relation statistique entre deux variables démographiques :
 
 └── images/ # Visualisations générées
 
-      ├── 01_histogramme_natalite.jpg
+├── 01_histogramme_natalite.jpg
       
-      ├── 02_histogramme_urbanisation.jpg
+├── 02_histogramme_urbanisation.jpg
 
-      ├── 03_boxplot_natalite.jpg
+├── 03_boxplot_natalite.jpg
 
-      ├── 04_boxplot_urbanisation.jpg
+├── 04_boxplot_urbanisation.jpg
 
-      ├── 05_nuage_points.jpg
+├── 05_nuage_points.jpg
 
-      ├── 06_regression_lineaire.jpg
+├── 06_regression_lineaire.jpg
 
-      ├── 07_residus_ajustees.jpg
+├── 07_residus_ajustees.jpg
   
-      ├── 08_qqplot_residus.jpg
+├── 08_qqplot_residus.jpg
 
-      └── 09_diagnostic_complet.jpg
+└── 09_diagnostic_complet.jpg
 
 
 ## 🔧 Technologies Utilisées
@@ -96,14 +96,12 @@ natalité = 42.991 - 0.399 × urbanisation
 ## 📈 Visualisations
 
 ### Régression Linéaire
-
-![Régression Linéaire](06_regression_lineaire.jpg)
+![Régression Linéaire](06_regression_lineaire.png)
 
 *La droite de régression montre clairement la relation négative entre urbanisation et natalité.*
 
 ### Diagnostics du Modèle
-
-![Diagnostics](09_diagnostic_complet.jpg)
+![Diagnostics](09_diagnostic_complet.png)
 
 *Les graphiques de diagnostic valident les hypothèses du modèle linéaire.*
 
