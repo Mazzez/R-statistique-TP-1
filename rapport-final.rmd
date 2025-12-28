@@ -1,0 +1,348 @@
+---
+title: "Analyse complète : Relation entre Taux de Natalité et Taux d'Urbanisation"
+author: "Mazzez Mohamed Amine"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: united
+    code_folding: show
+    fig_width: 10
+    fig_height: 7
+---
+
+```{r setup, include=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+# Chargement des packages nécessaires
+knitr::opts_chunk$set(echo = TRUE, fig.path = "fig/")
+library(knitr)
+```
+
+# 1. Présentation des données et objectifs
+
+**Contexte :** Dans ce projet de statistique, nous étudions la relation entre le taux de natalité et le taux d'urbanisation pour 14 unités statistiques (pays ou régions).
+
+**Variables :**
+
+- **Taux de natalité** : nombre de naissances rapporté à la population (en %)
+- **Taux d'urbanisation** : proportion de population en zone urbaine (en %)
+
+**Objectifs de l'étude :**
+
+1. Décrire la distribution des taux de natalité et d'urbanisation  
+2. Étudier la corrélation entre ces deux variables  
+3. Ajuster et valider un modèle de régression linéaire simple
+
+---
+
+# 2. Importation et préparation des données
+
+```{r importation, echo=TRUE}
+# Définir le répertoire de travail (à adapter selon votre configuration)
+setwd("~/Desktop/R-stat/TP-1")
+
+# Importation du fichier CSV
+don <- read.csv2("don_mls.csv", header = TRUE, sep = ";", dec = ",")
+
+# Renommage des colonnes pour simplifier
+names(don) <- c("natalite", "urbanisation")
+
+# Conversion en numérique
+don$natalite      <- as.numeric(as.character(don$natalite))
+don$urbanisation  <- as.numeric(as.character(don$urbanisation))
+
+# Affichage des premières lignes
+kable(head(don, 14), caption = "Tableau complet des données")
+
+# Résumé statistique rapide
+summary(don)
+```
+
+---
+
+# 3. Analyse descriptive univariée
+
+```{r descriptives, echo=TRUE}
+# Calcul des statistiques descriptives pour chaque variable
+
+# Natalité
+moy_nat <- mean(don$natalite)
+med_nat <- median(don$natalite)
+sd_nat  <- sd(don$natalite)
+min_nat <- min(don$natalite)
+max_nat <- max(don$natalite)
+
+# Urbanisation
+moy_urb <- mean(don$urbanisation)
+med_urb <- median(don$urbanisation)
+sd_urb  <- sd(don$urbanisation)
+min_urb <- min(don$urbanisation)
+max_urb <- max(don$urbanisation)
+
+# Affichage formaté
+cat("=== TAUX DE NATALITE ===\n")
+cat("Moyenne:", round(moy_nat,2), "% | Médiane:", round(med_nat,2), "%\n")
+cat("Min:", round(min_nat,2), "% | Max:", round(max_nat,2), "%\n")
+cat("Écart-type:", round(sd_nat,2), "%\n\n")
+
+cat("=== TAUX D'URBANISATION ===\n")
+cat("Moyenne:", round(moy_urb,2), "% | Médiane:", round(med_urb,2), "%\n")
+cat("Min:", round(min_urb,2), "% | Max:", round(max_urb,2), "%\n")
+cat("Écart-type:", round(sd_urb,2), "%\n")
+```
+
+## 3.1 Histogrammes
+
+```{r histogrammes, echo=TRUE, fig.cap="Histogrammes des deux variables"}
+par(mfrow=c(1,2))
+
+hist(don$natalite, 
+     main="Histogramme du taux de natalité", 
+     xlab="Taux de natalité (%)", 
+     col="lightblue", 
+     border="white")
+
+hist(don$urbanisation, 
+     main="Histogramme du taux d'urbanisation", 
+     xlab="Taux d'urbanisation (%)", 
+     col="lightgreen", 
+     border="white")
+
+par(mfrow=c(1,1))
+```
+
+**Interprétation :** Les histogrammes montrent que le taux de natalité présente une distribution étalée entre 16% et 44%, tandis que l'urbanisation varie principalement entre 10% et 60%.
+
+## 3.2 Boxplots
+
+```{r boxplots, echo=TRUE, fig.cap="Boxplots des deux variables"}
+par(mfrow=c(1,2))
+
+boxplot(don$natalite, 
+        main="Boxplot du taux de natalité", 
+        ylab="Taux de natalité (%)", 
+        col="lightblue")
+
+boxplot(don$urbanisation, 
+        main="Boxplot du taux d'urbanisation", 
+        ylab="Taux d'urbanisation (%)", 
+        col="lightgreen")
+
+par(mfrow=c(1,1))
+```
+
+**Interprétation :** Les boxplots révèlent une dispersion modérée pour les deux variables, sans valeurs aberrantes extrêmes (outliers). La médiane de la natalité se situe autour de 32%, celle de l'urbanisation autour de 30%.
+
+---
+
+# 4. Analyse bivariée et corrélation
+
+## 4.1 Coefficient de corrélation
+
+```{r correlation, echo=TRUE}
+# Corrélation de Pearson
+r_pearson <- cor(don$natalite, don$urbanisation, method="pearson")
+test_cor  <- cor.test(don$natalite, don$urbanisation, method="pearson")
+
+cat("Coefficient de corrélation de Pearson : r =", round(r_pearson,3), "\n")
+cat("p-value du test de corrélation :", format(test_cor$p.value, digits=4), "\n")
+cat("Intervalle de confiance 95% :", round(test_cor$conf.int[1],3), "à", round(test_cor$conf.int[2],3), "\n")
+```
+
+**Interprétation :** La corrélation est **négative et forte** (r ≈ `r round(r_pearson,3)`), ce qui suggère qu'une augmentation du taux d'urbanisation est associée à une diminution du taux de natalité. Le test est statistiquement significatif (p < 0.05).
+
+## 4.2 Nuage de points
+
+```{r nuage_points, echo=TRUE, fig.cap="Nuage de points : Natalité en fonction de l'Urbanisation"}
+plot(don$urbanisation, don$natalite, 
+     main="Taux de natalité en fonction du taux d'urbanisation", 
+     pch=19, 
+     col="darkblue",
+     xlab="Taux d'urbanisation (%)", 
+     ylab="Taux de natalité (%)")
+```
+
+**Interprétation :** Le nuage de points confirme visuellement la tendance négative observée dans la corrélation.
+
+---
+
+# 5. Modèle de régression linéaire
+
+## 5.1 Ajustement du modèle
+
+```{r regression, echo=TRUE}
+# Ajustement du modèle linéaire
+mod_lin <- lm(natalite ~ urbanisation, data = don)
+
+# Résumé complet
+summary(mod_lin)
+
+# Extraction des coefficients
+a <- coef(mod_lin)[1]  # Intercept
+b <- coef(mod_lin)[2]  # Pente
+R2 <- summary(mod_lin)$r.squared
+p_pente <- summary(mod_lin)$coefficients[2,4]
+
+cat("\n=== RÉSULTATS DU MODÈLE ===\n")
+cat("Équation : natalité =", round(a,3), "+", round(b,3), "× urbanisation\n")
+cat("R² =", round(R2,3), "(", round(100*R2,1), "% de variance expliquée)\n")
+cat("p-value de la pente =", format(p_pente, digits=4), "\n")
+```
+
+**Interprétation principale :** 
+
+- Le modèle explique environ **`r round(100*R2,1)`%** de la variabilité du taux de natalité
+- La pente est **significativement différente de zéro** (p < 0.05)
+- Une augmentation de 1 point de pourcentage du taux d'urbanisation est associée à une diminution moyenne de **`r abs(round(b,3))`** points du taux de natalité
+
+## 5.2 Visualisation de la régression
+
+```{r regression_graph, echo=TRUE, fig.cap="Régression linéaire avec droite ajustée"}
+plot(don$urbanisation, don$natalite, 
+     pch=19, 
+     col="darkblue",
+     xlab="Taux d'urbanisation (%)", 
+     ylab="Taux de natalité (%)",
+     main="Régression linéaire : natalité ~ urbanisation")
+
+abline(mod_lin, col="red", lwd=3)
+
+# Ajout d'une légende
+legend("topright", 
+       legend=paste("y =", round(a,2), "+", round(b,3), "x\nR² =", round(R2,3)),
+       col="red", 
+       lwd=2, 
+       bty="n")
+```
+
+---
+
+# 6. Diagnostics du modèle
+
+Les graphiques de diagnostic permettent de vérifier les hypothèses du modèle linéaire :
+
+1. **Résidus vs ajustées** : vérifier la linéarité et l'homoscédasticité  
+2. **Q-Q plot** : vérifier la normalité des résidus  
+3. **Scale-Location** : détecter l'hétéroscédasticité  
+4. **Residuals vs Leverage** : identifier les points influents
+
+```{r diagnostics_residus, echo=TRUE}
+# Extraction des résidus et valeurs ajustées
+residus <- residuals(mod_lin)
+fites   <- fitted(mod_lin)
+
+# Résumé numérique
+summary(residus)
+cat("\nMoyenne des résidus (doit être ≈ 0) :", round(mean(residus), 6), "\n")
+```
+
+```{r diagnostics_graphiques, echo=TRUE, fig.cap="Diagnostics du modèle linéaire (vue détaillée)"}
+par(mfrow=c(2,2))
+
+# 1. Résidus vs valeurs ajustées
+plot(fites, residus,
+     main="Résidus vs valeurs ajustées",
+     xlab="Valeurs ajustées",
+     ylab="Résidus",
+     pch=19,
+     col="darkgreen")
+abline(h=0, col="red", lwd=2)
+
+# 2. Q-Q plot
+qqnorm(residus, main="Q-Q plot des résidus")
+qqline(residus, col="red", lwd=2)
+
+par(mfrow=c(1,1))
+```
+
+```{r diagnostics_auto, echo=TRUE, fig.cap="Diagnostics automatiques complets de lm()"}
+par(mfrow=c(2,2))
+plot(mod_lin, which=1:4)
+par(mfrow=c(1,1))
+```
+
+**Interprétation des diagnostics :**
+
+- **Résidus vs ajustées** : Les résidus sont bien centrés autour de zéro sans structure apparente → **linéarité OK**
+- **Q-Q plot** : Les points suivent globalement la droite théorique → **normalité approximative acceptable**
+- Pas de points extrêmes avec levier élevé → **absence de valeurs influentes majeures**
+
+Le modèle linéaire semble **approprié** pour ces données.
+
+---
+
+# 7. Synthèse des résultats
+
+```{r tableau_synthese, echo=TRUE, results='asis'}
+# Création d'un tableau récapitulatif
+resultats <- data.frame(
+  Indicateur = c(
+    "Nombre d'observations",
+    "Corrélation de Pearson (r)",
+    "p-value corrélation",
+    "Intercept (a)",
+    "Pente (b)",
+    "R²",
+    "R² ajusté",
+    "p-value pente"
+  ),
+  Valeur = c(
+    nrow(don),
+    round(r_pearson, 3),
+    format(test_cor$p.value, digits=3),
+    round(a, 3),
+    round(b, 3),
+    round(R2, 3),
+    round(summary(mod_lin)$adj.r.squared, 3),
+    format(p_pente, digits=3)
+  )
+)
+
+kable(resultats, 
+      caption="Tableau récapitulatif des résultats principaux", 
+      align=c('l','r'))
+```
+
+---
+
+# 8. Aperçu générale
+
+## Points clés
+
+1. **Relation négative forte** entre le taux d'urbanisation et le taux de natalité  
+   - Corrélation r = **`r round(r_pearson,3)`** (p < 0.01)
+
+2. **Modèle linéaire simple pertinent**  
+   - R² = **`r round(R2,3)`** (soit **`r round(100*R2,1)`%** de variance expliquée)  
+   - Équation : natalité = **`r round(a,2)`** + **`r round(b,3)`** × urbanisation
+
+3. **Interprétation pratique**  
+   - Chaque augmentation de **1 point de pourcentage** du taux d'urbanisation est associée à une diminution moyenne de **`r abs(round(b,3))` points** du taux de natalité
+
+4. **Validité du modèle**  
+   - Les diagnostics (résidus, Q-Q plot) confirment la pertinence du modèle linéaire
+   - Pente statistiquement significative (p < 0.05)
+
+## Limites de l'étude
+
+- **Petit échantillon** : seulement 14 observations, ce qui limite la généralisation
+- **Absence de covariables** : d'autres facteurs peuvent influencer la natalité (niveau de développement, politiques familiales, accès à l'éducation, etc.)
+- **Corrélation ≠ causalité** : la relation observée ne prouve pas un lien de cause à effet direct
+
+## Perspectives
+
+Pour approfondir cette analyse, il serait pertinent de :
+
+- Augmenter la taille de l'échantillon  
+- Intégrer d'autres variables explicatives (PIB/habitant, taux de scolarisation, etc.)  
+- Tester des modèles non linéaires ou des interactions entre variables
+
+---
+
+# 9. Conclusion
+
+Cette étude met en évidence une relation négative forte et statistiquement significative entre le taux d'urbanisation et le taux de natalité, avec un coefficient de corrélation de Pearson r = `r round(r_pearson,3)` (p < 0.01). Le modèle de régression linéaire simple ajusté explique `r round(100*R2,1)`% de la variabilité du taux de natalité (R² = `r round(R2,3)`), avec une équation de la forme : natalité = `r round(a,2)` + `r round(b,3)` × urbanisation. Concrètement, chaque augmentation de 1 point de pourcentage du taux d'urbanisation est associée à une diminution moyenne de `r abs(round(b,3))` points du taux de natalité, ce qui reflète une tendance démographique observée dans de nombreux contextes où l'urbanisation s'accompagne d'une baisse de la fécondité. Les diagnostics du modèle (résidus centrés autour de zéro, Q-Q plot acceptable, absence de valeurs influentes majeures) confirment la validité de l'approche linéaire pour ces données. Toutefois, ces résultats doivent être interprétés avec prudence compte tenu de la taille limitée de l'échantillon (n = 14) et de l'absence d'autres variables explicatives potentiellement importantes telles que le niveau de développement économique, le taux de scolarisation féminine ou les politiques familiales. De plus, il convient de rappeler que la corrélation observée ne permet pas d'établir un lien de causalité directe entre urbanisation et natalité, d'autres facteurs confondants pouvant intervenir dans cette relation. Pour approfondir cette analyse, il serait pertinent d'augmenter la taille de l'échantillon, d'intégrer des covariables supplémentaires dans un modèle de régression multiple et d'explorer d'éventuelles relations non linéaires ou des interactions entre variables. En conclusion, bien que le modèle linéaire simple fournisse une première approximation satisfaisante de la relation entre urbanisation et natalité dans cet échantillon, une analyse plus complète nécessiterait des données plus riches et des méthodes statistiques plus avancées.
+
+---
+
+**Fin du rapport - Analyse réalisée avec R le `r Sys.Date()`**

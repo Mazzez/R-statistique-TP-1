@@ -1,0 +1,83 @@
+============================================
+RAPPORT D'ANALYSE STATISTIQUE COMPLETE
+Relation entre TAUX DE NATALITE et TAUX D'URBANISATION
+============================================
+
+Date d'analyse : 2025-12-27 12:09:57.371142
+Nombre d'observations : 14
+============================================
+
+1. DESCRIPTION DES VARIABLES
+=============================
+TAUX DE NATALITE : moyenne = 31.11 % | médiane = 31.80 % | min = 16.0 % | max = 44.2 % | écart-type = 10.00 %
+TAUX D'URBANISATION : moyenne = 29.79 % | médiane = 30.80 % | min = 6.8 % | max = 56.5 % | écart-type = 15.57 %
+
+IMAGE 1 : Histogramme du taux de natalité
+[Insérer image/01_histogramme_natalite.png]
+Ce graphique montre la distribution du taux de natalité. On observe une distribution étalée
+entre 16 et 44 %, avec une concentration autour de 25-35 %. L'asymétrie suggère quelques
+unités avec des taux particulièrement élevés.
+
+IMAGE 2 : Histogramme du taux d'urbanisation
+[Insérer image/02_histogramme_urbanisation.png]
+Distribution de l'urbanisation plus homogène, concentrée entre 10-50 % avec un pic autour
+de 30-40 %. Moins d'asymétrie que pour la natalité.
+
+IMAGE 3 : Boxplot du taux de natalité
+[Insérer image/03_boxplot_natalite.png]
+Le boxplot du taux de natalité montre une dispersion modérée autour de la médiane,
+avec un intervalle interquartile relativement large. Les moustaches couvrent l'ensemble
+des valeurs observées sans point extrême isolé, ce qui indique l'absence d'outliers marqués.
+
+IMAGE 4 : Boxplot du taux d'urbanisation
+[Insérer image/04_boxplot_urbanisation.png]
+Le boxplot du taux d'urbanisation fait apparaître une variabilité plus importante,
+avec une médiane située autour de 30 %. La distribution semble légèrement étalée
+vers les valeurs élevées, sans observation clairement aberrante.
+
+2. ANALYSE BIVARIEE
+====================
+Corrélation de Pearson : r = -0.621 (p-value = 0.0177)
+
+IMAGE 5 : Nuage de points
+[Insérer image/05_nuage_points.png]
+Visualisation de la relation brute. On observe une tendance négative claire : les unités
+les plus urbanisées tendent à avoir des taux de natalité plus faibles.
+
+3. MODELE DE REGRESSION LINEAIRE
+================================
+Équation : natalité = 42.991 + -0.399 × urbanisation
+R² = 0.386 (38.6 % de variance expliquée)
+Pente significative (p = 0.0177)
+
+IMAGE 6 : Régression linéaire
+[Insérer image/06_regression_lineaire.png]
+Droite de régression rouge confirmant la relation négative forte. La pente négative indique
+qu'une augmentation de 1 point d'urbanisation est associée à une baisse moyenne de %.3f
+points de natalité.
+-0.399
+
+4. DIAGNOSTICS DU MODELE
+========================
+
+IMAGE 7 : Résidus vs ajustées
+[Insérer image/07_residus_ajustees.png]
+Les résidus sont centrés autour de 0 sans motif clair (bonne linéarité et homoscédasticité).
+
+IMAGE 8 : Q-Q plot des résidus
+[Insérer image/08_qqplot_residus.png]
+Les points suivent globalement la droite rouge (normalité approximative des résidus satisfaisante).
+
+IMAGE 9 : Diagnostics complets
+[Insérer image/09_diagnostic_complet.png]
+Les 4 graphiques standards confirment la validité du modèle linéaire simple.
+
+5. CONCLUSION
+==============
+Une relation **négative forte** (r = -0.621) existe entre urbanisation et natalité.
+Le modèle linéaire explique 38.6 % de la variance (R² = 0.386).
+L'urbanisation est un prédicteur pertinent du taux de natalité dans cet échantillon.
+Limites : petit effectif (n=14), absence d'autres covariables (revenu, éducation, etc.).
+
+============================================
+FIN DU RAPPORT - Analyse terminée avec succès
