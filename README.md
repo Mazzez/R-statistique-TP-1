@@ -2,6 +2,10 @@
 
 Projet d'analyse de la relation entre le taux de natalité et le taux d'urbanisation à l'aide de R, incluant une régression linéaire simple et une application Shiny interactive.
 
+![R](https://img.shields.io/badge/R-276DC3?logo=r&logoColor=white)
+
+![Shiny](https://img.shields.io/badge/Shiny-2C8EBB?logo=rstudio&logoColor=white)
+
 ## 🎯 Objectifs du Projet
 
 Ce projet étudie la relation statistique entre deux variables démographiques :
